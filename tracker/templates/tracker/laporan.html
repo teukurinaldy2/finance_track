@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Laporan Bulanan</h2>
+
+<a href="{% url 'transaction_list' %}">Back to Dashboard</a>
+
+<hr>
+
+{% for month, data in laporan.items %}
+
+<h3>{{ month }}</h3>
+
+<table border="1" cellpadding="10" width="100%">
+    <!-- SALDO AWAL -->
+    <tr>
+        <td><strong>Saldo Awal</strong></td>
+        <td colspan="2">Rp {{ data.saldo_awal }}</td>
+    </tr>
+
+    <!-- PEMASUKAN PER KATEGORI -->
+    <tr style="background-color: #e8f5e9;">
+        <td colspan="3"><strong>Cash In</strong></td>
+    </tr>
+    {% for category, total in data.income.items %}
+    <tr>
+        <td style="padding-left: 20px;">{{ category }}</td>
+        <td style="color: green;">Rp {{ total }}</td>
+        <td></td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="3" style="padding-left: 20px;">No income this month.</td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td><strong>Total Income</strong></td>
+        <td style="color: green;"><strong>Rp {{ data.total_income }}</strong></td>
+        <td></td>
+    </tr>
+
+    <!-- PENGELUARAN PER KATEGORI -->
+    <tr style="background-color: #ffebee;">
+        <td colspan="3"><strong>Cash Out</strong></td>
+    </tr>
+    {% for category, total in data.expense.items %}
+    <tr>
+        <td style="padding-left: 20px;">{{ category }}</td>
+        <td style="color: red;">Rp {{ total }}</td>
+        <td></td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="3" style="padding-left: 20px;">No expense this month.</td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td><strong>Total Expense</strong></td>
+        <td style="color: red;"><strong>Rp {{ data.total_expense }}</strong></td>
+        <td></td>
+    </tr>
+
+    <!-- BALANCE AKHIR -->
+    <tr>
+        <td><strong>Balance</strong></td>
+        <td colspan="2">
+            {% if data.balance >= 0 %}
+                <strong style="color: blue;">Rp {{ data.balance }}</strong>
+            {% else %}
+                <strong style="color: red;">Rp {{ data.balance }}</strong>
+            {% endif %}
+        </td>
+    </tr>
+</table>
+
+<br>
+
+{% empty %}
+<p>No data yet.</p>
+{% endfor %}
+
+{% endblock %}

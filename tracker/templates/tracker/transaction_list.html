@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- DASHBOARD SUMMARY -->
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-3">
+            <p class="text-muted mb-1">Total Income</p>
+            <h4 class="text-success">Rp {{ total_income }}</h4>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-3">
+            <p class="text-muted mb-1">Total Expense</p>
+            <h4 class="text-danger">Rp {{ total_expense }}</h4>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-3">
+            <p class="text-muted mb-1">Balance</p>
+            <h4 class="text-primary">Rp {{ balance }}</h4>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- FORM TAMBAH TRANSAKSI -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">Add Transaction</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger small">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-dark">Add Transaction</button>
+        </form>
+    </div>
+</div>
+
+<hr>
+
+<!-- DAFTAR TRANSAKSI -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">List Transactions</h5>
+        <form method="POST" action="{% url 'reset_data' %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-danger btn-sm"
+                    onclick="return confirm('Are you sure want to reset all data?')">
+                Reset Data
+            </button>
+        </form>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover table-striped mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Note</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in transactions %}
+                <tr>
+                    <td>{{ t.date }}</td>
+                    <td>{{ t.category }}</td>
+                    <td>
+                        {% if t.type == 'IN' %}
+                            <span class="badge bg-success">Cash In</span>
+                        {% else %}
+                            <span class="badge bg-danger">Cash Out</span>
+                        {% endif %}
+                    </td>
+                    <td>Rp {{ t.amount }}</td>
+                    <td>{{ t.note|default:"-" }}</td>
+                    <td>
+                        <a href="{% url 'edit_transaction' t.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{% url 'delete_transaction' t.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-3">No transactions yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr>
+
+<!-- REKAP BULANAN -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">Monthly Recap</h5>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Month</th>
+                    <th>Income</th>
+                    <th>Expense</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for month, data in rekap.items %}
+                <tr>
+                    <td>{{ month }}</td>
+                    <td class="text-success">Rp {{ data.income }}</td>
+                    <td class="text-danger">Rp {{ data.expense }}</td>
+                    <td>
+                        {% if data.balance >= 0 %}
+                            <span class="text-primary fw-bold">Rp {{ data.balance }}</span>
+                        {% else %}
+                            <span class="text-danger fw-bold">Rp {{ data.balance }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-3">No data yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

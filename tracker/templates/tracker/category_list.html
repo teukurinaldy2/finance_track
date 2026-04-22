@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">Manage Category</h2>
+
+<!-- FORM TAMBAH KATEGORI -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">Add Category</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger small">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-dark">Add Category</button>
+            <a href="{% url 'transaction_list' %}" class="btn btn-secondary">Back</a>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+
+    <!-- DAFTAR KATEGORI PEMASUKAN -->
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Income Categories</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in categories_in %}
+                        <tr>
+                            <td>{{ category.name }}</td>
+                            <td><span class="badge bg-success">Cash In</span></td>
+                            <td>
+                                <a href="{% url 'edit_category' category.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="{% url 'delete_category' category.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted py-3">No income category yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAFTAR KATEGORI PENGELUARAN -->
+    <div class="col-md-6">
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Saldo Awal</h2>
+
+<!-- FORM TAMBAH SALDO AWAL -->
+<h3>Add Saldo Awal</h3>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    <a href="{% url 'transaction_list' %}">Back</a>
+</form>
+
+<hr>
+
+<!-- DAFTAR SALDO AWAL -->
+<h3>Saldo Awal History</h3>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Month</th>
+        <th>Saldo Awal</th>
+    </tr>
+    {% for saldo in saldo_list %}
+    <tr>
+        <td>{{ saldo.month|date:"F Y" }}</td>
+        <td>Rp {{ saldo.amount }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="2">No saldo awal yet.</td></tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
