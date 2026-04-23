@@ -11,3 +11,7 @@ Aplikasi pencatatan keuangan sederhana dibangun menggunakan python dan django. P
 - Django
 - MYSQL
 - HTML
+
+
+# Note
+Aplikasi ini masih dalam pengembangan mungkin ada beberapa bug
